@@ -1,5 +1,5 @@
 from mindsdb.api.mongo.classes import Responder
-from mindsdb.utilities.with_kwargs_wrapper import WithKWArgsWrapper
+from mindsdb.utilities.context import context as ctx
 
 
 class Responce(Responder):
@@ -9,22 +9,12 @@ class Responce(Responder):
     def result(self, query, request_env, mindsdb_env, session):
         company_id = query.get('company_id')
         user_class = query.get('user_class', 0)
+        email_confirmed = query.get('email_confirmed', 1)
         need_response = query.get('need_response', False)
 
-        mindsdb_env['user_class'] = user_class
-        mindsdb_env['company_id'] = company_id
-        mindsdb_env['data_store'] = WithKWArgsWrapper(
-            mindsdb_env['origin_data_store'],
-            company_id=company_id
-        )
-        mindsdb_env['model_interface'] = WithKWArgsWrapper(
-            mindsdb_env['origin_model_interface'],
-            company_id=company_id
-        )
-        mindsdb_env['datasource_controller'] = WithKWArgsWrapper(
-            mindsdb_env['origin_datasource_controller'],
-            company_id=company_id
-        )
+        ctx.company_id = company_id
+        ctx.user_class = user_class
+        ctx.email_confirmed = email_confirmed
 
         if need_response:
             return {'ok': 1}

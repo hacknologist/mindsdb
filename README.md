@@ -1,179 +1,261 @@
-<h1 align="center">
-	<img width="300" src="https://github.com/mindsdb/mindsdb_native/blob/stable/assets/MindsDBColorPurp@3x.png?raw=true" alt="MindsDB">
-	<br>
+<a name="readme-top"></a>
 
-</h1>
 <div align="center">
-	<a href="https://github.com/mindsdb/mindsdb/actions"><img src="https://github.com/mindsdb/mindsdb/workflows/MindsDB%20workflow/badge.svg" alt="MindsDB workflow"></a>
+	<a href="https://pypi.org/project/MindsDB/" target="_blank"><img src="https://badge.fury.io/py/MindsDB.svg" alt="MindsDB Release"></a>
+	<a href="https://www.python.org/downloads/" target="_blank"><img src="https://img.shields.io/badge/python-3.8.x%7C%203.9.x%7C%203.10.x%7C%203.11.x-brightgreen.svg" alt="Python supported"></a>
+	<a href="https://ossrank.com/p/630"><img src="https://shields.io/endpoint?url=https://ossrank.com/shield/630"></a>
+	<img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/Mindsdb">
+	<a href="https://hub.docker.com/u/mindsdb" target="_blank"><img src="https://img.shields.io/docker/pulls/mindsdb/mindsdb" alt="Docker pulls"></a>
 
-  <a href="https://www.python.org/downloads/" target="_blank"><img src="https://img.shields.io/badge/python-3.6%20|%203.7|%203.8-brightgreen.svg" alt="Python supported"></a>
-   <a href="https://pypi.org/project/MindsDB/" target="_blank"><img src="https://badge.fury.io/py/MindsDB.svg" alt="PyPi Version"></a>
-<img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/Mindsdb">  <a href="https://hub.docker.com/u/mindsdb" target="_blank"><img src="https://img.shields.io/docker/pulls/mindsdb/mindsdb" alt="Docker pulls"></a>
-  <a href="https://www.mindsdb.com/"><img src="https://img.shields.io/website?url=https%3A%2F%2Fwww.mindsdb.com%2F" alt="MindsDB Website"></a>	
-    <a href="https://join.slack.com/t/mindsdbcommunity/shared_invite/zt-o8mrmx3l-5ai~5H66s6wlxFfBMVI6wQ" target="_blank"><img src="https://img.shields.io/badge/slack-@mindsdbcommunity-brightgreen.svg?logo=slack " alt="MindsDB Community"></a>
-	</br>
-	<a href="https://deepnote.com/project/Machine-Learning-With-SQL-8GDF7bc7SzKlhBLorqoIcw/%2Fmindsdb_demo.ipynb" target="_blank"><img src="https://deepnote.com/buttons/launch-in-deepnote-white.svg" alt="Launch in Deepnote"></a>
-	</br>
-	
-  <h3 align="center">
+  <br />
+  <br />
+
+  <a href="https://github.com/mindsdb/mindsdb">
+    <img src="/docs/assets/mindsdb_logo.jpg" alt="MindsDB" width="300">
+  </a>
+
+  <p align="center">
+    <br />
     <a href="https://www.mindsdb.com?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo">Website</a>
-    <span> | </span>
+    ·
     <a href="https://docs.mindsdb.com?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo">Docs</a>
-    <span> | </span>
-    <a href="https://join.slack.com/t/mindsdbcommunity/shared_invite/zt-o8mrmx3l-5ai~5H66s6wlxFfBMVI6wQ">Community Slack</a>
-    <span> | </span>
-    <a href="https://github.com/mindsdb/mindsdb/projects">Contribute</a>
-    <span> | </span>
-    <a href="https://cloud.mindsdb.com">Demo</a>
-    <span> | </span>
-    <a href="https://github.com/mindsdb/mindsdb/blob/staging/integrations_contest.md">Integrations Contest</a>
-  </h3>
-  
+    ·
+    <a href="https://mindsdb.com/joincommunity?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo">Community Slack</a>
+  </p>
 </div>
 
 ----------------------------------------
 
-[MindsDB](https://mindsdb.com?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo)  ML-SQL Server enables machine learning workflows for the most powerful databases and datawarehouses using SQL.  [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Machine%20Learning%20inside%20Databases%20&url=https://www.mindsdb.com&via=mindsdb&hashtags=ai,ml,machine_learning,neural_networks,databases,sql)
-* Developers can quickly add AI capabilities to your applications.
-* Data Scientists can streamline MLOps by deploying ML models as AI Tables.
-* Data Analysts can easily make forecasts on complex data (like multivariate time-series with high cardinality) and visualize them in BI tools like Tableau.
+## 📖 About us
 
-**NEW!** Check-out the new MindsDB [ideation 💡 challenge](https://github.com/mindsdb/mindsdb/blob/staging/integrations_contest.md) (and the cash:dollar: prizes) for democratizing machine learning!
+MindsDB is the platform for customizing AI from enterprise data.
 
-If you like our project then we would really appreciate **a Star ⭐!**
+With MindsDB, you can deploy, serve, and fine-tune models in real-time, utilizing data from databases, vector stores, or applications, to build AI-powered apps - using universal tools developers already know.
 
-Also, check-out the [rewards and community programs.](https://mindsdb.com/community?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo)
+<p align="center">
+  <img src="/docs/assets/diagram.png"/>
+</p>
 
-----------------------------------------
+MindsDB integrates with numerous [data sources](https://docs.mindsdb.com/integrations/data-overview?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo), including databases, vector stores, and applications, and popular [AI/ML frameworks](https://docs.mindsdb.com/integrations/ai-overview?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo), including AutoML and LLMs. MindsDB connects data sources with AI/ML frameworks and automates routine workflows between them. By doing so, we bring data and AI together, enabling the intuitive implementation of customized AI systems.
 
-[Installation](https://github.com/mindsdb/mindsdb#installation) - [Overview](https://github.com/mindsdb/mindsdb#overview) - [Features](https://github.com/mindsdb/mindsdb#features) - [Database Integrations](https://github.com/mindsdb/mindsdb#database-integrations) - [Quickstart](https://github.com/mindsdb/mindsdb#quickstart) - [Documentation](https://github.com/mindsdb/mindsdb#documentation) - [Support](https://github.com/mindsdb/mindsdb#support) - [Contributing](https://github.com/mindsdb/mindsdb#contribution) - [Mailing lists](https://github.com/mindsdb/mindsdb#mailing-lists) - [License](https://github.com/mindsdb/mindsdb#license)
+Learn more about [features and use cases of MindsDB here](https://docs.mindsdb.com/what-is-mindsdb?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo).
 
-----------------------------
+## 🚀 Get Started
 
-<h2 align="center">
-   Machine Learning using SQL 
-   <br/>
-   <br/>
-  <img width="600" src="https://docs.mindsdb.com/assets/mdb_image.png" alt="MindsDB">	
+To get started, install MindsDB locally via [Docker](https://docs.mindsdb.com/setup/self-hosted/docker?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo) or [Docker Desktop](https://docs.mindsdb.com/setup/self-hosted/docker-desktop?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo), following the instructions in linked doc pages.
 
-</h2>
+MindsDB enhances SQL syntax to enable seamless development and deployment of AI-powered applications. Furthermore, users can interact with MindsDB not only via [SQL API](https://docs.mindsdb.com/mindsdb_sql/overview?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo) but also via [REST APIs](https://docs.mindsdb.com/rest/overview?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo), [Python SDK](https://docs.mindsdb.com/sdks/python/overview?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo), [JavaScript SDK](https://docs.mindsdb.com/sdks/javascript/overview?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo), and [MongoDB-QL](https://docs.mindsdb.com/sdks/mongo/mindsdb-mongo-ql-overview?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo).
 
-<img width="1222" alt="image" src="https://user-images.githubusercontent.com/5898506/172740218-61db5eec-1bcf-4832-99d9-308709a426a7.png">
+| 🎯  Solutions                 | ⚙️ SQL Query Examples |
+|---------------------------|-----------|
+| 🤖 [Fine-Tuning](https://docs.mindsdb.com/sql/api/finetune#example-3-openai-model?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo)            |  <code> FINETUNE mindsdb.hf_model FROM postgresql.table; </code>  |
+| 📚 [Knowledge Base](https://docs.mindsdb.com/agents/knowledge-bases?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo)         | <code> CREATE KNOWLEDGE_BASE my_knowledge FROM (SELECT contents FROM drive.files); </code> |
+| 🔍 [Semantic Search](https://docs.mindsdb.com/integrations/ai-engines/rag?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo)        |  <code> SELECT * FROM rag_model WHERE question='What product is best for treating a cold?';  </code>   |
+| ⏱️ [Real-Time Forecasting](https://docs.mindsdb.com/sql/tutorials/eeg-forecasting?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo) | <code> SELECT * FROM binance.trade_data WHERE symbol = 'BTCUSDT'; </code> |
+| 🕵️ [Agents](https://docs.mindsdb.com/agents/agent?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo)                | <code> CREATE AGENT my_agent USING model='chatbot_agent', skills = ['knowledge_base']; </code>    |
+| 💬 [Chatbots](https://docs.mindsdb.com/agents/chatbot?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo)               |  <code> CREATE CHATBOT slack_bot USING database='slack',agent='customer_support'; </code>|
+| ⏲️ [Time Driven Automation](https://docs.mindsdb.com/sql/create/jobs?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo)      |  <code> CREATE JOB twitter_bot ( <sql_query1>, <sql_query2> ) START '2023-04-01 00:00:00';   </code>           |
+| 🔔 [Event Driven Automation](https://docs.mindsdb.com/sql/create/trigger?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo)      | <code> CREATE TRIGGER data_updated ON mysql.customers_data (sql_code)           |
 
-## Demo
+## 💡 Examples
 
-You can try Mindsdb ML SQL server here [(demo)](https://cloud.mindsdb.com).
+MindsDB enables you to deploy AI/ML models, send predictions to your application, and automate AI workflows.
 
-## Installation
+[Discover more tutorials and use cases here](https://docs.mindsdb.com/use-cases/overview?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo).
 
-To install the latest version of MindsDB please pull the following Docker image:
+### AI Workflow Automation
 
+This category of use cases involves tasks that get data from a data source, pass it through an AI/ML model, and write the output to a data destination.
+
+<p align="center">
+  <img src="/docs/assets/ai_workflow_automation.png"/>
+</p>
+
+Common use cases are anomaly detection, data indexing/labeling/cleaning, and data transformation.
+
+This example showcases the data enrichment flow, where input data comes from a PostgreSQL database and is passed through an OpenAI model to generate new content which is saved into a data destination.
+
+We take customer reviews from a PostgreSQL database. Then, we deploy an OpenAI model that analyzes all customer reviews and assigns sentiment values. Finally, to automate the workflow for incoming customer reviews, we create a job that generates and saves AI output into a data destination.
+
+```sql
+-- Step 1. Connect a data source to MindsDB
+CREATE DATABASE data_source
+WITH ENGINE = "postgres",
+PARAMETERS = {
+    "user": "demo_user",
+    "password": "demo_password",
+    "host": "samples.mindsdb.com",
+    "port": "5432",
+    "database": "demo",
+    "schema": "demo_data"
+};
+
+SELECT *
+FROM data_source.amazon_reviews_job;
+
+-- Step 2. Deploy an AI model
+CREATE ML_ENGINE openai_engine
+FROM openai
+USING
+    openai_api_key = 'your-openai-api-key';
+
+CREATE MODEL sentiment_classifier
+PREDICT sentiment
+USING
+    engine = 'openai_engine',
+    model_name = 'gpt-4',
+    prompt_template = 'describe the sentiment of the reviews
+						strictly as "positive", "neutral", or "negative".
+						"I love the product":positive
+						"It is a scam":negative
+						"{{review}}.":';
+
+DESCRIBE sentiment_classifier;
+
+-- Step 3. Join input data with AI model to get AI output
+SELECT input.review, output.sentiment
+FROM data_source.amazon_reviews_job AS input
+JOIN sentiment_classifier AS output;
+
+-- Step 4. Automate this workflow to accomodate real-time and dynamic data
+CREATE DATABASE data_destination
+WITH ENGINE = "engine-name",      -- choose the data source you want to connect to save AI output
+PARAMETERS = {                    -- list of available data sources: https://docs.mindsdb.com/integrations/data-overview
+    "key": "value",
+	...
+};
+
+CREATE JOB ai_automation_flow (
+	INSERT INTO data_destination.ai_output (
+		SELECT input.created_at,
+			   input.product_name,
+			   input.review,
+			   output.sentiment
+		FROM data_source.amazon_reviews_job AS input
+		JOIN sentiment_classifier AS output
+		WHERE input.created_at > LAST
+	);
+);
 ```
-docker pull mindsdb/mindsdb
+
+### AI System Deployment
+
+This category of use cases involves creating AI systems composed of multiple connected parts, including various AI/ML models and data sources, and exposing such AI systems via APIs.
+
+<p align="center">
+  <img src="/docs/assets/ai_system_deployment.png"/>
+</p>
+
+Common use cases are agents and assistants, recommender systems, forecasting systems, and semantic search.
+
+This example showcases AI agents, a feature developed by MindsDB. AI agents can be assigned certain skills, including text-to-SQL skills and knowledge bases. Skills provide an AI agent with input data that can be in the form of a database, a file, or a website.
+
+We create a text-to-SQL skill based on the car sales dataset and deploy a conversational model, which are both components of an agent. Then, we create an agent and assign this skill and this model to it. This agent can be queried to ask questions about data stored in assigned skills.
+
+```sql
+-- Step 1. Connect a data source to MindsDB
+CREATE DATABASE data_source
+WITH ENGINE = "postgres",
+PARAMETERS = {
+    "user": "demo_user",
+    "password": "demo_password",
+    "host": "samples.mindsdb.com",
+    "port": "5432",
+    "database": "demo",
+    "schema": "demo_data"
+};
+
+SELECT *
+FROM data_source.car_sales;
+
+-- Step 2. Create a skill
+CREATE SKILL my_skill
+USING
+    type = 'text2sql',
+    database = 'data_source',
+    tables = ['car_sales'],
+    description = 'car sales data of different car types';
+
+SHOW SKILLS;
+
+-- Step 3. Deploy a conversational model
+CREATE ML_ENGINE langchain_engine
+FROM langchain
+USING
+      openai_api_key = 'your openai-api-key';
+      
+CREATE MODEL my_conv_model
+PREDICT answer
+USING
+    engine = 'langchain_engine',
+    model_name = 'gpt-4',
+    mode = 'conversational',
+    user_column = 'question' ,
+    assistant_column = 'answer',
+    max_tokens = 100,
+    temperature = 0,
+    verbose = True,
+    prompt_template = 'Answer the user input in a helpful way';
+
+DESCRIBE my_conv_model;
+
+-- Step 4. Create an agent
+CREATE AGENT my_agent
+USING
+    model = 'my_conv_model',
+    skills = ['my_skill'];
+
+SHOW AGENTS;
+
+-- Step 5. Query an agent
+SELECT *
+FROM my_agent
+WHERE question = 'what is the average price of cars from 2018?';
+
+SELECT *
+FROM my_agent
+WHERE question = 'what is the max mileage of cars from 2017?';
+
+SELECT *
+FROM my_agent
+WHERE question = 'what percentage of sold cars (from 2016) are automatic/semi-automatic/manual cars?';
+
+SELECT *
+FROM my_agent
+WHERE question = 'is petrol or diesel more common for cars from 2019?';
+
+SELECT *
+FROM my_agent
+WHERE question = 'what is the most commonly sold model?';
 ```
 
-Or, use PyPI:
+[Agents are accessible via API endpoints](https://docs.mindsdb.com/rest/agents/agent?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo).
 
-```
-pip install mindsdb
-```
+## 🤝 Contribute
 
-## Overview
+If you’d like to contribute to MindsDB, install MindsDB for development following [this instruction](https://docs.mindsdb.com/contribute/install?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo).
 
-MindsDB automates and abstracts machine learning models through virtual AI Tables:
+You’ll find the [contribution guide here](https://docs.mindsdb.com/contribute/contribute?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo).
 
-Apart from abstracting ML models as AI Tables inside databases, MindsDB has a set of unique capabilities as:
+We are always open to suggestions, so feel free to open new issues with your ideas, and we can guide you!
 
-* Easily make predictions over very complex multivariate time-series data with high cardinality
+This project is released with a [Contributor Code of Conduct](https://github.com/mindsdb/mindsdb/blob/stable/CODE_OF_CONDUCT.md). By participating in this project, you agree to follow its terms.
 
-* An open JSON-AI syntax to tune ML models and optimize ML pipelines in a declarative way
+Also, check out the [rewards and community programs here](https://mindsdb.com/community?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo).
 
+## 🤍 Support
 
-#### How it works:
+If you find a bug, please submit an [issue on GitHub here](https://github.com/mindsdb/mindsdb/issues/new/choose).
 
-1. Let MindsDB connect to your database.
+Here is how you can get community support:
 
-2. Train a Predictor using a single SQL statement (make MindsDB learn from historical data automatically) or import your own ML model to a Predictor via JSON-AI . 
-
-3. Make predictions with SQL statements (Predictor is exposed as virtual AI Tables). There’s no need to deploy models since they are already part of the data layer.
-
-Check our [docs](https://docs.mindsdb.com/?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo) and [blog](https://mindsdb.com/blog/?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo) for tutorials and use case examples.
-
-
-## Features
-
-* Automatic data pre-processing, feature engineering and encoding
-* Classification, regression, time-series tasks
-* Bring models to production without “traditional deployment” as AI Tables
-* Get mModels’ accuracy scoring and confidence intervals for each prediction
-* Join ML models with existing data
-* Anomaly detection
-* Model explainability analysis 
-* GPU support for models’ training
-* Open JSON-AI syntax to build models and bring your own ML blocks in a declarative way 
-* REST API available as well
-
-
-## Database Integrations
-
-MindsDB works with most of the SQL and NoSQL databases and data Streams for real-time ML.
-
-| Connect your Data |
-|-|
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/Apache Kafka-808080?style=for-the-badge&logo=apache-kafka&logoColor=white" alt="Connect Apache Kafka"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/Amazon%20Redshift-0466C8?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="Connect Amazon Redshift"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/Cassandra-1287B1?style=for-the-badge&logo=apache%20cassandra&logoColor=white" alt="Connect Cassandra"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/Clickhouse-e6e600?style=for-the-badge&logo=clickhouse&logoColor=white" alt="Connect Clickhouse"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/CockroachDB-426EDF?style=for-the-badge&logo=cockroach-labs&logoColor=white" alt="Connect CockroachDB"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white" alt="Connect MariaDB"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/Microsoft%20SQL%20Sever-CC2927?style=for-the-badge&logo=microsoft%20sql%20server&logoColor=white" alt="Connect SQL Server"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" alt="Connect MongoDB"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/MySQL-00758F?style=for-the-badge&logo=mysql&logoColor=white" alt="Connect MySQL"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="Connect PostgreSQL"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/QuestDB-d14671?style=for-the-badge&logo=questdb&logoColor=white" alt="Connect QuestDB"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/redis-%23DD0031.svg?&style=for-the-badge&logo=redis&logoColor=white" alt="Connect Redis"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/ScyllaDB-53CADD?style=for-the-badge&logo=scylladbb&logoColor=white" alt="Connect ScyllaDB"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/Singlestore-5f07b4?style=for-the-badge&logo=singlestore&logoColor=white" alt="Connect Singlestore"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/Snowflake-35aedd?style=for-the-badge&logo=snowflake&logoColor=blue" alt="Connect Snowflake"></a> |
-| <a href="https://docs.mindsdb.com/"><img src="https://img.shields.io/badge/Trino-dd00a1?style=for-the-badge&logo=trino&logoColor=white" alt="Connect Trino"></a> |
-
-[:question: :wave: Missing integration?](https://github.com/mindsdb/mindsdb/issues/new?assignees=&labels=&template=feature-mindsdb-request.yaml)
-
-## Quickstart
-
-To get your hands on MindsDB, we recommend using the [Docker image](https://docs.mindsdb.com/deployment/docker/?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo) or simply sign up for a [free cloud account](https://cloud.mindsdb.com/signup?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo).
-Feel free to browse [documentation](https://docs.mindsdb.com?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo) for other installation methods and tutorials.
-
-## Documentation
-
-You can find the complete documentation of MindsDB at [docs.mindsdb.com](https://docs.mindsdb.com?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo).
-Documentation for our HTTP API can be found at [apidocs.mindsdb.com](https://apidocs.mindsdb.com/).
-
-## Support
-
-If you found a bug, please submit an [issue on Github](https://github.com/mindsdb/mindsdb/issues).
-
-To get community support, you can:
-* Post at MindsDB [Slack community](https://join.slack.com/t/mindsdbcommunity/shared_invite/zt-o8mrmx3l-5ai~5H66s6wlxFfBMVI6wQ).
-* Ask for help at our [Github Discussions](https://github.com/mindsdb/mindsdb/discussions).
+* Post a question at [MindsDB Slack Community](https://mindsdb.com/joincommunity?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo).
+* Ask for help at our [GitHub Discussions](https://github.com/mindsdb/mindsdb/discussions).
 * Ask a question at [Stackoverflow](https://stackoverflow.com/questions/tagged/mindsdb) with a MindsDB tag.
 
-If you need commercial support, please [contact](https://mindsdb.com/contact/?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo) the MindsDB team.
+If you need commercial support, please [contact the MindsDB team](https://mindsdb.com/contact?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo).
 
-## Contributing
-
-A great place to start contributing to MindsDB will be our GitHub projects for :checkered_flag:
-* Community writers [dashboard tasks](https://github.com/mindsdb/mindsdb/projects/7).
-* Community code contributors [dashboard tasks](https://github.com/mindsdb/mindsdb/projects/8).
-
-Also, we are always open to suggestions so feel free to open new issues with your ideas and we can give you guidance!
-
-Being part of the core team is accessible to anyone who is motivated and wants to be part of that journey!
-If you'd like to contribute to the project, refer to the [contributing documentation](https://docs.mindsdb.com/contribute/?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo).
-
-Please note that this project is released with a [Contributor Code of Conduct](https://github.com/mindsdb/mindsdb/blob/stable/CODE_OF_CONDUCT.md). By participating in this project, you agree to abide by its terms.
-
-### Current contributors
+## 💚 Current contributors
 
 <a href="https://github.com/mindsdb/mindsdb/graphs/contributors">
   <img src="https://contributors-img.web.app/image?repo=mindsdb/mindsdb" />
@@ -181,12 +263,10 @@ Please note that this project is released with a [Contributor Code of Conduct](h
 
 Made with [contributors-img](https://contributors-img.web.app).
 
-## Mailing lists
+## 🔔 Subscribe to updates
 
-Subscribe to MindsDB Monthly [Community Newsletter](https://mindsdb.com/newsletter/?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo) to get general announcements, release notes, information about MindsDB events, and the latest blog posts.
-You may also join our [beta-users](https://mindsdb.com/beta-tester/?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo) group, and get access to new beta features.
+Join our [Slack community](https://mindsdb.com/joincommunity?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo) and subscribe to the monthly [Developer Newsletter](https://mindsdb.com/newsletter?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo) to get product updates, information about MindsDB events and contests, and useful content, like tutorials.
 
+## ⚖️ License 
 
-## License
-
-MindsDB is licensed under [GNU General Public License v3.0](https://github.com/mindsdb/mindsdb/blob/master/LICENSE)
+For detailed licensing information, please refer to the [LICENSE file](https://github.com/mindsdb/mindsdb/blob/master/LICENSE).

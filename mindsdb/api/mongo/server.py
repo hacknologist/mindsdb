@@ -2,19 +2,25 @@ import socketserver as SocketServer
 import socket
 import struct
 import bson
+import traceback
 from bson import codec_options
 from collections import OrderedDict
 from abc import abstractmethod
+from bson.codec_options import CodecOptions
+from bson.codec_options import TypeCodec
+from bson.codec_options import TypeRegistry
+import numpy as np
+import datetime as dt
 
 import mindsdb.api.mongo.functions as helpers
 from mindsdb.api.mongo.classes import RespondersCollection, Session
-from mindsdb.api.mongo.responders import responders
-from mindsdb.api.mongo.utilities import log
-from mindsdb.utilities.with_kwargs_wrapper import WithKWArgsWrapper
-from mindsdb.interfaces.storage.db import session as db_session
-from mindsdb.interfaces.datastore.datastore import DataStore
-from mindsdb.interfaces.model.model_interface import ModelInterface
-from mindsdb.interfaces.database.integrations import IntegrationController
+from mindsdb.interfaces.storage import db
+from mindsdb.interfaces.model.model_controller import ModelController
+from mindsdb.interfaces.database.integrations import integration_controller
+from mindsdb.interfaces.database.projects import ProjectController
+from mindsdb.interfaces.database.database import DatabaseController
+from mindsdb.utilities.context import context as ctx
+from mindsdb.utilities import log
 
 OP_REPLY = 1
 OP_UPDATE = 2001
@@ -29,6 +35,37 @@ BYTE = '<b'
 INT = '<i'
 UINT = '<I'
 LONG = '<q'
+
+logger = log.getLogger(__name__)
+
+
+class NPIntCodec(TypeCodec):
+    python_type = np.int64
+    bson_type = bson.int64.Int64
+
+    def transform_python(self, value):
+        return bson.int64.Int64(value)
+
+    def transform_bson(self, value):
+        return np.int(value)
+
+
+class DateCodec(TypeCodec):
+    python_type = dt.date
+    bson_type = bson.datetime.datetime
+
+    def transform_python(self, value):
+        return dt.datetime(value.year, value.month, value.day)
+
+    def transform_bson(self, value):
+        return dt.datetime(value.year, value.month, value.day)
+
+
+def fallback_encoder(value):
+    return str(value)
+
+
+type_registry = TypeRegistry([NPIntCodec(), DateCodec()], fallback_encoder=fallback_encoder)
 
 
 def unpack(format, buffer, start=0):
@@ -127,7 +164,7 @@ class OpMsgResponder(OperationResponder):
         elif remaining != 0:
             raise Exception('is bytes left after msg parsing')
 
-        log.debug(f'GET OpMSG={query}')
+        logger.debug(f'GET OpMSG={query}')
 
         responder = self.responders.find_match(query)
         assert responder is not None, 'query cant be processed'
@@ -141,10 +178,15 @@ class OpMsgResponder(OperationResponder):
 
         return documents
 
-    def to_bytes(self, response, request_id):
-        flags = struct.pack("<I", 0)  # TODO
+    def to_bytes(self, response, request_id, is_error=False):
+        if is_error:
+            flags = struct.pack("<I", 2)
+        else:
+            flags = struct.pack("<I", 0)  # TODO
         payload_type = struct.pack("<b", 0)  # TODO
-        payload_data = bson.BSON.encode(response)
+
+        codec_options = CodecOptions(type_registry=type_registry)
+        payload_data = bson.BSON.encode(response, codec_options=codec_options)
         data = b''.join([flags, payload_type, payload_data])
 
         reply_id = 0  # TODO add seq here
@@ -167,7 +209,7 @@ class OpQueryResponder(OperationResponder):
 
         query = docs[0]  # docs = [query, returnFieldsSelector]
 
-        log.debug(f'GET OpQuery={query}')
+        logger.debug(f'GET OpQuery={query}')
 
         responder = self.responders.find_match(query)
         assert responder is not None, 'query cant be processed'
@@ -191,7 +233,7 @@ class OpQueryResponder(OperationResponder):
         reply_id = 123  # TODO
         response_to = request_id
 
-        log.debug(f'RET docs={request}')
+        logger.debug(f'RET docs={request}')
 
         data = b''.join([flags, cursor_id, starting_from, number_returned])
         data += b''.join([bson.BSON.encode(doc) for doc in [request]])
@@ -229,8 +271,9 @@ class MongoRequestHandler(SocketServer.BaseRequestHandler):
         self.request = ssl_socket
 
     def handle(self):
-        log.debug('connect')
-        log.debug(str(self.server.socket))
+        ctx.set_default()
+        logger.debug('connect')
+        logger.debug(str(self.server.socket))
 
         self.session = Session(self.server.mindsdb_env)
 
@@ -248,22 +291,33 @@ class MongoRequestHandler(SocketServer.BaseRequestHandler):
             request_id, pos = unpack(INT, header, pos)
             response_to, pos = unpack(INT, header, pos)
             opcode, pos = unpack(INT, header, pos)
-            log.debug(f'GET length={length} id={request_id} opcode={opcode}')
+            logger.debug(f'GET length={length} id={request_id} opcode={opcode}')
             msg_bytes = self._read_bytes(length - pos)
             answer = self.get_answer(request_id, opcode, msg_bytes)
             if answer is not None:
                 self.request.send(answer)
 
-        db_session.close()
+            db.session.close()
 
     def get_answer(self, request_id, opcode, msg_bytes):
         if opcode not in self.server.operationsHandlersMap:
             raise NotImplementedError(f'Unknown opcode {opcode}')
         responder = self.server.operationsHandlersMap[opcode]
         assert responder is not None, 'error'
-        response = responder.handle(msg_bytes, request_id, self.session.mindsdb_env, self.session)
-        if response is None:
-            return None
+        try:
+            response = responder.handle(msg_bytes, request_id, self.session.mindsdb_env, self.session)
+            if response is None:
+                return None
+        except Exception as e:
+            logger.error(e)
+            response = {
+                "ok": 0,
+                "errmsg": f'{str(e)} : {traceback.format_exc()}',
+                "code": 2,
+                "codeName": "BadValue"
+            }
+            return responder.to_bytes(response, request_id, is_error=True)
+
         return responder.to_bytes(response, request_id)
 
     def _read_bytes(self, length):
@@ -271,7 +325,7 @@ class MongoRequestHandler(SocketServer.BaseRequestHandler):
         while length:
             chunk = self.request.recv(length)
             if chunk == b'':
-                log.debug('Connection closed')
+                logger.debug('Connection closed')
                 return False
 
             length -= len(chunk)
@@ -285,28 +339,17 @@ class MongoServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
         assert mongodb_config is not None, 'is no mongodb config!'
         host = mongodb_config['host']
         port = mongodb_config['port']
-        log.debug(f'start mongo server on {host}:{port}')
+        logger.debug(f'start mongo server on {host}:{port}')
 
         super().__init__((host, int(port)), MongoRequestHandler)
 
         self.mindsdb_env = {
             'config': config,
-            'origin_data_store': DataStore(),
-            'origin_model_interface': ModelInterface(),
-            'origin_datasource_controller': IntegrationController(),
+            'model_controller': ModelController(),
+            'integration_controller': integration_controller,
+            'project_controller': ProjectController(),
+            'database_controller': DatabaseController()
         }
-        self.mindsdb_env['model_interface'] = WithKWArgsWrapper(
-            self.mindsdb_env['origin_model_interface'],
-            company_id=None
-        )
-        self.mindsdb_env['data_store'] = WithKWArgsWrapper(
-            self.mindsdb_env['origin_data_store'],
-            company_id=None
-        )
-        self.mindsdb_env['datasource_controller'] = WithKWArgsWrapper(
-            self.mindsdb_env['origin_datasource_controller'],
-            company_id=None
-        )
 
         respondersCollection = RespondersCollection()
 
@@ -344,6 +387,7 @@ class MongoServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
         )
         # OpMSG=OrderedDict([('ismaster', 1), ('$db', 'admin'), ('$clusterTime', OrderedDict([('clusterTime', Timestamp(1599749031, 1)), ('signature', OrderedDict([('hash', b'6\x87\xd5Y\xa7\xc7\xcf$\xab\x1e\xa2{\xe5B\xe5\x99\xdbl\x8d\xf4'), ('keyId', 6870854312365391875)]))])), ('$client', OrderedDict([('application', OrderedDict([('name', 'MongoDB Shell')])), ('driver', OrderedDict([('name', 'MongoDB Internal Client'), ('version', '3.6.3')])), ('os', OrderedDict([('type', 'Linux'), ('name', 'Ubuntu'), ('architecture', 'x86_64'), ('version', '18.04')])), ('mongos', OrderedDict([('host', 'maxs-comp:27103'), ('client', '127.0.0.1:52148'), ('version', '3.6.3')]))])), ('$configServerState', OrderedDict([('opTime', OrderedDict([('ts', Timestamp(1599749031, 1)), ('t', 1)]))]))])
 
+        from mindsdb.api.mongo.responders import responders
         respondersCollection.responders += responders
 
 

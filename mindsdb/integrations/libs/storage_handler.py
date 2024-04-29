@@ -8,7 +8,7 @@ import redis
 import sqlite3
 
 
-class StorageHandler:
+class KVStorageHandler:
     """ 
     Simple key-value store. Instances of this handler shall store any information required by other handlers.
     Context should store anything relevant to the storage handler, e.g. CompanyID, UserID, parent handler name, among others. 
@@ -22,12 +22,14 @@ class StorageHandler:
         serialized_key = self.serializer.dumps(key)
         return md5(serialized_key).hexdigest() + md5(self.context).hexdigest()
 
-    def get(self, key):
+    def get(self, key, default_value=None):
         serialized_value = self._get(self._get_context_key(key))
         if serialized_value:
             return self.serializer.loads(serialized_value)
+        elif default_value is not None:
+            return default_value
         else:
-            return None
+            raise KeyError(f"Key not found: {key}")
 
     def set(self, key: str, value: object):
         serialized_value = self.serializer.dumps(value)
@@ -40,7 +42,7 @@ class StorageHandler:
         raise NotImplementedError()
 
 
-class SqliteStorageHandler(StorageHandler):
+class SqliteStorageHandler(KVStorageHandler):
     """ StorageHandler that uses SQLite as backend. """  # noqa
     def __init__(self, context: Dict, config=None):
         super().__init__(context, config)
@@ -62,7 +64,7 @@ class SqliteStorageHandler(StorageHandler):
         if results:
             return results[0][0]  # should always be a single match, hence the [0]s
         else:
-            return []
+            return None
 
     def _set(self, serialized_key, serialized_value):
         cur = self.connection.cursor()
@@ -70,7 +72,7 @@ class SqliteStorageHandler(StorageHandler):
         self.connection.commit()
 
 
-class RedisStorageHandler(StorageHandler):
+class RedisStorageHandler(KVStorageHandler):
     """ StorageHandler that uses Redis as backend. """  # noqa
     def __init__(self, context: Dict, config=None):
         super().__init__(context, config)

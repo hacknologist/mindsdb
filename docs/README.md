@@ -1,63 +1,23 @@
-# MindsDB Documentation
+# MindsDB Documentation    <a href="https://docs.mindsdb.com?utm_medium=community&utm_source=github&utm_campaign=mindsdb%20repo"><img src="https://img.shields.io/website?url=https%3A%2F%2Fwww.mindsdb.com%2F" alt="MindsDB Docs"/></a>	
 
 ## Running the docs locally
 
-First install the mkdocs and mkdocs-material theme in your python virtual environment:
-```
-pip install -r requirements.txt
-```
-Then, navigate to the `/mindsdb-docs` directory and start the server:
+First install `mintlify`:
 
 ```
-mkdocs serve
+npm i -g mintlify
 ```
-
-The documentation website will be available at `http://127.0.0.1:8000`
-
-
-## Deploy the docs
-
-The latest version shall be automatically pushed and deployed after merge on master. If the CI/CD deploy failed, locally run:
+Then, start the server:
 
 ```
-mkdocs gh-deploy
+mintlify dev
 ```
 
-All of the html files and assets will be pushed to the [gh-pages](https://github.com/mindsdb/mindsdb-docs/tree/gh-pages) branch and published on github pages.
+The documentation website will be available at `http://127.0.0.1:3000`
 
-## Repository structure
 
-The mindsdb-docs layout is as follows:
 
-```
-docs                                   # Contains documentation source files
-|__assets/                             # Image and icons used in pages
-|__.md                                 # All of the markdown files used as pages
-overrides
-├─ assets/
-│  ├─ images/                          # Images and icons
-│  ├─ javascripts/                     # JavaScript
-│  └─ stylesheets/                     # Stylesheets
-├─ partials/
-│  ├─ footer.html                      # Footer bar
-├─ 404.html                            # 404 error page
-├─ base.html                           # Base template
-└─ main.html
-.mkdocs.yml                            # Mkdocs configuration file
-```
-# Contribute
+## How can you help us? [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/mindsdb/mindsdb-docs/issues)
 
-## How can you help us? [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/mindsdb/mindsdb/issues)
-
-* Report a bug
-* Improve documentation
-* Propose new feature
-* Fix typos
-
-## Contributors
-
-<a href="https://github.com/mindsdb/mindsdb-docs/graphs/contributors">
-  <img src="https://contributors-img.web.app/image?repo=mindsdb/mindsdb-docs" />
-</a>
-
-Made with [contributors-img](https://contributors-img.web.app).
+* [How to Contribute docs](https://docs.mindsdb.com/contribute)
+* [Writing Documentation](https://docs.mindsdb.com/contribute/docs)

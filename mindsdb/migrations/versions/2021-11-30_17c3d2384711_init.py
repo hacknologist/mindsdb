@@ -1,10 +1,20 @@
+import datetime
+
 from alembic.autogenerate import produce_migrations, render, api
 from alembic import context
+from sqlalchemy import UniqueConstraint
+from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, Index
 
 # required for code execution
-import mindsdb.interfaces.storage.db
-from alembic import op
-import sqlalchemy as sa
+from alembic import op  # noqa
+import sqlalchemy as sa  # noqa
+
+import mindsdb.interfaces.storage.db    # noqa
+from mindsdb.interfaces.storage.db import Json, Array
+from mindsdb.utilities import log
+
+logger = log.getLogger(__name__)
 
 # revision identifiers, used by Alembic.
 revision = '17c3d2384711'
@@ -13,16 +23,13 @@ branch_labels = None
 depends_on = None
 
 # ========================================== current database state ========================================
-from mindsdb.interfaces.storage.db import Json, Array
-
-import datetime
-
-from sqlalchemy import UniqueConstraint
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, Index
 
 
-Base = declarative_base()
+class Base:
+    __allow_unmapped__ = True
+
+
+Base = declarative_base(cls=Base)
 
 # Source: https://stackoverflow.com/questions/26646362/numpy-array-is-not-json-serializable
 
@@ -142,7 +149,6 @@ def upgrade():
        Generates a migration script by difference between model and database and executes it
     '''
 
-
     target_metadata = Base.metadata
 
     mc = context.get_context()
@@ -161,8 +167,8 @@ def upgrade():
 
     code = template_args['upgrades']
     code = code.replace('\n    ', '\n')
-    print('\nPerforming database changes:')
-    print(code)
+    logger.info('\nPerforming database changes:')
+    logger.info(code)
     exec(code)
 
 

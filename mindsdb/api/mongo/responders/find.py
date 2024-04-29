@@ -1,149 +1,164 @@
 from bson.int64 import Int64
-from collections import OrderedDict
-from lightwood.api import dtype
-from mindsdb.api.mongo.classes import Responder
+
+from mindsdb_sql.parser.ast import Join, Select, Identifier, Describe, Show, Constant
 import mindsdb.api.mongo.functions as helpers
+from mindsdb.api.mongo.classes import Responder
+from mindsdb.api.mongo.utilities.mongodb_ast import MongoToAst
+from mindsdb.interfaces.jobs.jobs_controller import JobsController
+
+from mindsdb.api.mongo.classes.query_sql import run_sql_command
+
+
+def find_to_ast(query, database):
+    mongoToAst = MongoToAst()
+
+    collection = [database, query['find']]
+
+    if not query.get('singleBatch') and 'collection' in query.get('filter'):
+        # JOIN mode
+
+        # upper query
+        ast_query = mongoToAst.find(
+            collection=collection,
+            projection=query.get('projection'),
+            sort=query.get('sort'),
+            limit=query.get('limit'),
+            skip=query.get('skip'),
+        )
+
+        # table_query
+        collection = query['filter']['collection']
+        filter = query['filter'].get('query', {})
+        table_select = mongoToAst.find(
+            collection=collection,
+            filter=filter,
+        )
+        table_select.parentheses = True
+        table_select.alias = Identifier(query['filter']['collection'])
+        table_select.alias.parts = [table_select.alias.parts[-1]]
+        if 'limit' in query:
+            table_select.limit = Constant(query['limit'])
+
+        modifiers = query['filter'].get('modifiers')
+        if modifiers is not None and hasattr(ast_query, 'modifiers'):
+            for modifier in modifiers:
+                table_select.modifiers.append(modifier)
+
+        # convert to join
+        right_table = ast_query.from_table
+
+        ast_join = Join(
+            left=table_select,
+            right=right_table,
+            join_type='join'
+        )
+        ast_query.from_table = ast_join
+
+    else:
+        # is single table
+        ast_query = mongoToAst.find(
+            collection=collection,
+            filter=query.get('filter'),
+            projection=query.get('projection'),
+            sort=query.get('sort'),
+            limit=query.get('limit'),
+            skip=query.get('skip'),
+        )
+        modifiers = query['filter'].get('modifiers')
+        if modifiers is not None and hasattr(ast_query, 'modifiers'):
+            for modifier in modifiers:
+                ast_query.modifiers.append(modifier)
+    return ast_query
 
 
 class Responce(Responder):
     when = {'find': helpers.is_true}
 
     def result(self, query, request_env, mindsdb_env, session):
-        models = mindsdb_env['model_interface'].get_models()
-        model_names = [x['name'] for x in models]
-        table = query['find']
-        where_data = query.get('filter', {})
-        if table == 'predictors':
+        database = request_env['database']
+        project_name = request_env['database']
+
+        if database == 'config':
+            # return nothing
+            return {
+                'cursor': {
+                    'id': Int64(0),
+                    'ns': f"{database}.$cmd.{query['find']}",
+                    'firstBatch': []
+                },
+                'ok': 1
+            }
+
+        # system queries
+        elif query['find'] == 'system.version':
+            # For studio3t
             data = [{
-                'name': x['name'],
-                'status': x['status'],
-                'accuracy': str(x['accuracy']) if x['accuracy'] is not None else None,
-                'predict': ', '.join(x['predict'] if isinstance(x['predict'], list) else [x['predict']]),
-                'error': x['error'],
-                'select_data_query': '',
-                'training_options': ''
-            } for x in models]
-        elif table in model_names:
-            # prediction
-            model = mindsdb_env['model_interface'].get_model_data(name=query['find'])
+                "_id": "featureCompatibilityVersion",
+                "version": "3.6"
+            }]
+            cursor = {
+                'id': Int64(0),
+                'ns': f"system.version.$cmd.{query['find']}",
+                'firstBatch': data
+            }
+            return {
+                'cursor': cursor,
+                'ok': 1
+            }
 
-            columns = []
-            columns += list(model['dtype_dict'].keys())
-            predict = model['predict']
-            if not isinstance(predict, list):
-                predict = [predict]
-            columns += [f'{x}_original' for x in predict]
-            for col in predict:
-                if model['dtype_dict'][col] in (dtype.integer, dtype.float):
-                    columns += [f"{col}_min", f"{col}_max"]
-                columns += [f"{col}_confidence"]
-                columns += [f"{col}_explain"]
-
-            columns += ['when_data', 'select_data_query']
-
-            where_data_list = where_data if isinstance(where_data, list) else [where_data]
-            for statement in where_data_list:
-                if isinstance(statement, dict):
-                    for key in statement:
-                        if key not in columns:
-                            columns.append(key)
-
-            datasource = where_data
-            if 'select_data_query' in where_data:
-                integrations = mindsdb_env['datasource_controller'].get_all().keys()
-                connection = where_data.get('connection')
-                if connection is None:
-                    if 'default_mongodb' in integrations:
-                        connection = 'default_mongodb'
-                    else:
-                        for integration in integrations:
-                            if integration.startswith('mongodb_'):
-                                connection = integration
-                                break
-
-                if connection is None:
-                    raise Exception("Can't find connection from which fetch data")
-
-                ds_name = mindsdb_env['data_store'].get_vacant_name('temp')
-
-                mindsdb_env['data_store'].save_datasource(
-                    name=ds_name,
-                    source_type=connection,
-                    source=where_data['select_data_query']
-                )
-                datasource = mindsdb_env['data_store'].get_datasource_obj(ds_name, raw=True)
-
-            if isinstance(datasource, OrderedDict):
-                datasource = dict(datasource)
-
-            pred_dict_arr, explanations = mindsdb_env['model_interface'].predict(table, datasource, 'dict&explain')
-
-            if 'select_data_query' in where_data:
-                mindsdb_env['data_store'].delete_datasource(ds_name)
-
-            predicted_columns = model['predict']
-            if not isinstance(predicted_columns, list):
-                predicted_columns = [predicted_columns]
-
-            data = []
-            all_columns = list(model['dtype_dict'].keys())   # [k for k in pred_dict_arr[0] if k in columns]
-            min_max_keys = []
-            for col in predicted_columns:
-                if model['dtype_dict'][col] in (dtype.integer, dtype.float):
-                    min_max_keys.append(col)
-
-            for i in range(len(pred_dict_arr)):
-                row = {}
-                explanation = explanations[i]
-
-                for value in pred_dict_arr[i].values():
-                    row.update(value)
-                if 'predicted_value' in row:
-                    del row['predicted_value']
-                for key in pred_dict_arr[i]:
-                    row[key] = pred_dict_arr[i][key]['predicted_value']
-                for key in all_columns:
-                    if key not in row:
-                        row[key] = None
-
-                for key in predicted_columns:
-                    row[key + '_confidence'] = explanation[key]['confidence']
-                    row[key + '_explain'] = explanation[key]
-                for key in min_max_keys:
-                    if 'confidence_lower_bound' in explanation[key]:
-                        row[key + '_min'] = explanation[key]['confidence_lower_bound']
-                    if 'confidence_upper_bound' in explanation[key]:
-                        row[key + '_max'] = explanation[key]['confidence_upper_bound']
-                data.append(row)
+        elif query['find'] == 'ml_engines':
+            ast_query = Show('ml_engines')
 
         else:
-            # probably wrong table name. Mongo in this case returns empty data
-            data = []
+            ast_query = find_to_ast(query, database)
 
-        if 'projection' in query and len(data) > 0:
-            true_filter = []
-            false_filter = []
-            for key, value in query['projection'].items():
-                if helpers.is_true(value):
-                    true_filter.append(key)
-                else:
-                    false_filter.append(key)
+        # add _id for objects
+        table_name = None
+        obj_idx = {}
+        if isinstance(ast_query, Select) and ast_query.from_table is not None:
+            if isinstance(ast_query.from_table, Identifier):
+                table_name = ast_query.from_table.parts[-1].lower()
 
-            keys = list(data[0].keys())
-            del_id = '_id' in false_filter
-            if len(true_filter) > 0:
-                for row in data:
-                    for key in keys:
-                        if key != '_id':
-                            if key not in true_filter:
-                                del row[key]
-                        elif del_id:
-                            del row[key]
-            else:
-                for row in data:
-                    for key in false_filter:
-                        if key in row:
-                            del row[key]
+                if table_name == 'models' or table_name == 'models_versions':
+
+                    models = mindsdb_env['model_controller'].get_models(
+                        ml_handler_name=None,
+                        project_name=project_name
+                    )
+
+                    for model in models:
+                        obj_idx[model['name']] = model['id']
+
+                    # is select from model without where
+                    if table_name in obj_idx and ast_query.where is None:
+                        # replace query to describe model
+                        ast_query = Describe(ast_query.from_table)
+                elif table_name == 'jobs':
+                    jobs_controller = JobsController()
+                    for job in jobs_controller.get_list(project_name):
+                        obj_idx[job['name']] = job['id']
+
+        data = run_sql_command(request_env, ast_query)
+
+        if table_name == 'models' or table_name == 'models_versions':
+            # for models and models_versions _id is:
+            #   - first 20 bytes is version
+            #   - next bytes is model id
+
+            for row in data:
+                model_id = obj_idx.get(row.get('NAME'))
+                if model_id is not None:
+                    obj_id = model_id << 20
+
+                    if table_name == 'models_versions':
+                        obj_id += row.get('VERSION', 0)
+
+                    row['_id'] = helpers.int_to_objectid(obj_id)
+        elif table_name == 'jobs':
+            for row in data:
+                obj_id = obj_idx.get(row.get('NAME'))
+                if obj_id is not None:
+                    row['_id'] = helpers.int_to_objectid(obj_id)
 
         db = mindsdb_env['config']['api']['mongodb']['database']
 

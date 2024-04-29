@@ -1,37 +1,37 @@
-import unittest
 import json
-import mysql.connector
-
 from pathlib import Path
 
-from common import (
-    run_environment,
-    EXTERNAL_DB_CREDENTIALS,
-    CONFIG_PATH)
+import mysql.connector
+import pytest
 
-from test_mysql_api import TestScenario, Dlist
+from .test_mysql_api import TestMySqlApi, Dlist
+
+# used by (required for) mindsdb_app fixture in conftest
+API_LIST = ["http", "mysql"]
 
 
-class MySqlBinApiTest(unittest.TestCase, TestScenario):
+@pytest.mark.usefixtures("mindsdb_app")
+class TestMySqlBinApi(TestMySqlApi):
+    """Test mindsdb mysql api.
+    All sql commands are being executed through binary mode of mysql protocol.
+    This class inherits all tests from TestMySqlApi:
+    -k 'not TestMySqlApi' is required for test launch.
+    Otherwise inherited tests will be executed twice:
+    First one for TestMySqlApi, second one for TestMysqlBinApi
+    In general all tests do next:
+        1. Do some preconditions
+        2. Specify SQL query needs to be executed
+        3. Send the query to a Mindsdb app in binary mode and execute the query"""
 
-    @classmethod
-    def setUpClass(cls):
-
-        run_environment(apis=['http', 'mysql'])
-
-        cls.config = json.loads(Path(CONFIG_PATH).read_text())
-
-        with open(EXTERNAL_DB_CREDENTIALS, 'rt') as f:
-            cls.db_creds = json.load(f)
 
     def query(self, _query, encoding='utf-8'):
 
         cnx = mysql.connector.connect(
             host=self.config["api"]["mysql"]["host"],
             port=self.config["api"]["mysql"]["port"],
-            user=self.config["api"]["mysql"]["user"],
             database='mindsdb',
-            password=self.config["api"]["mysql"]["password"]
+            user=self.config["auth"]["username"],
+            password=self.config["auth"]["password"]
         )
         cursor = cnx.cursor(prepared=True)
 
@@ -52,11 +52,9 @@ class MySqlBinApiTest(unittest.TestCase, TestScenario):
         else:
             res = {}
 
-        # print(f'==query==\n {_query}')
-        # print(f'==result==\n {res}')
         return res
 
-    def test_8_1_tableau_queries(self):
+    def test_tableau_queries(self, subtests):
         test_ds_name = self.file_datasource_name
         predictor_name = "predictor_from_file"
         integration = "files"
@@ -106,15 +104,30 @@ class MySqlBinApiTest(unittest.TestCase, TestScenario):
                    JOIN mindsdb.{predictor_name} as res
                 ) `Custom SQL Query`
                 LIMIT 100
-            '''
+            ''',
+            f'''
+            SELECT 
+              `Custom SQL Query`.`x1` AS `x1`,
+              SUM(`Custom SQL Query`.`y2`) AS `sum_y2_ok`
+            FROM (
+               SELECT res.x1, res.y as y2 
+               FROM files.{test_ds_name} as source
+               JOIN mindsdb.{predictor_name} as res
+            ) `Custom SQL Query`
+            GROUP BY 1
+            ''',
+            f'''
+            SELECT 
+              `Custom SQL Query`.`x1` AS `x1`,
+              COUNT(DISTINCT TRUNCATE(`Custom SQL Query`.`y`,0)) AS `ctd_y_ok`
+            FROM (
+               SELECT res.x1, res.y
+               FROM files.{test_ds_name} as source
+               JOIN mindsdb.{predictor_name} as res
+            ) `Custom SQL Query`
+            GROUP BY 1
+            ''',
         ]
-        for _query in queries:
-            self.query(_query)
-
-
-if __name__ == "__main__":
-    try:
-        unittest.main(failfast=True, verbosity=2)
-        print('Tests passed!')
-    except Exception as e:
-        print(f'Tests Failed!\n{e}')
+        for i, _query in enumerate(queries):
+            with subtests.test(msg=i, _query=_query):
+                self.query(_query)
